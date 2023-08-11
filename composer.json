@@ -1,0 +1,23 @@
+{
+  "name": "keanuro/go-around",
+  "authors": [
+    {
+      "name": "name",
+      "email": "test@gmail.com"
+    }
+  ],
+  "require" : {
+    "ext-pdo": "*",
+    "php": "^8.1",
+    "ext-mbstring": "*",
+    "ext-pcntl": "*",
+    "ext-pdo-pgsql": "*",
+    "ext-pgsql": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "GoAroundCustomer\\": "src/CustomerApp/Backend",
+      "GoAroundAdmin\\": "src/AdminApp/Backend"
+    }
+  }
+}
