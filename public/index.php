@@ -1,10 +1,14 @@
 <?php
-$host        = "host = postgres";
-$port        = "port = 5432";
-$dbname      = "dbname = my_db";
-$credentials = "user = root password=root";
 
 use GoAroundCustomer\Test;
+
+require __DIR__ . '/../vendor/autoload.php';
+
+$host = "host = postgres";
+$port = "port = 5432";
+$dbname = "dbname = my_db";
+$credentials = "user = root password=root";
+
 
 var_dump(new Test());
 
