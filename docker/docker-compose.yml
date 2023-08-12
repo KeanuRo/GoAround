@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: ./php/php.dockerfile
     volumes:
-      - ./../public:/var/www/html
+      - ./../:/var/www
 
   nginx:
     image: nginx:alpine
@@ -15,7 +15,7 @@ services:
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d
       - ./nginx/logs:/var/log/nginx
-      - ./../public:/var/www/html
+      - ./../:/var/www
 
   db:
     container_name: postgres

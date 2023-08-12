@@ -1,3 +1,4 @@
 /postgres_data
 /docker/nginx/logs
+/vendor
 .idea

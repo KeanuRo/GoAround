@@ -23,5 +23,7 @@ RUN docker-php-ext-install pdo pdo_pgsql && docker-php-ext-install pgsql  \
     && docker-php-ext-configure gd --enable-gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ \
     && docker-php-ext-install gd
 
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+
 EXPOSE 9000
 CMD ["php-fpm"]

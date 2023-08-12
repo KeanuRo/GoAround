@@ -4,6 +4,9 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src/AdminApp/Backend" isTestSource="false" packagePrefix="GoAroundAdmin\" />
       <sourceFolder url="file://$MODULE_DIR$/src/CustomerApp/Backend" isTestSource="false" packagePrefix="GoAroundCustomer\" />
+      <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
