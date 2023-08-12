@@ -1,16 +1,20 @@
 <?php
 
-use GoAroundCustomer\Test;
+use GoAroundCustomer\DotenvLoader;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$host = "host = postgres";
-$port = "port = 5432";
-$dbname = "dbname = my_db";
-$credentials = "user = root password=root";
+function var_dump_fixed ($data) {
+    echo "<pre>";
+    var_dump($data);
+    echo "</pre>";
+}
 
 
-var_dump(new Test());
+$envLoader = new DotenvLoader('../.env');
+
+$envLoader->readDotenv('var_dump_fixed');
+
 
 //$db = pg_connect( "$host $port $dbname $credentials"  );
 //
