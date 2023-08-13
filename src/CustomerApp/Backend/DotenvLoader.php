@@ -17,7 +17,7 @@ class DotenvLoader
 
     public function readDotenv(callable $callback): void
     {
-        $variables;
+        $variables = [];
         $contents = file($this->path, FILE_SKIP_EMPTY_LINES | FILE_IGNORE_NEW_LINES);
         foreach ($contents as $string) {
             list($name, $value) = explode('=', $string);
