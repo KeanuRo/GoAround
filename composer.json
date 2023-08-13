@@ -17,7 +17,8 @@
   "autoload": {
     "psr-4": {
       "GoAroundCustomer\\": "src/CustomerApp/Backend",
-      "GoAroundAdmin\\": "src/AdminApp/Backend"
+      "GoAroundAdmin\\": "src/AdminApp/Backend",
+      "Helpers\\": "src/helpers"
     }
   }
 }
