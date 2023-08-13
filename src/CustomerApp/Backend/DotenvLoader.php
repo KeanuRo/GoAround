@@ -2,21 +2,9 @@
 
 namespace GoAroundCustomer;
 
-abstract class DotenvLoaderClassType
+class DotenvLoader
 {
     protected string $path;
-
-    public array $variables;
-
-    public function loadDotenv(callable $callback) {}
-
-    private function appendToServer () {}
-}
-
-class DotenvLoader extends DotenvLoaderClassType
-{
-    protected string $path;
-    public array $variables;
 
     public function __construct(string $path)
     {
@@ -29,16 +17,17 @@ class DotenvLoader extends DotenvLoaderClassType
 
     public function readDotenv(callable $callback): void
     {
+        $variables;
         $contents = file($this->path, FILE_SKIP_EMPTY_LINES | FILE_IGNORE_NEW_LINES);
-
         foreach ($contents as $string) {
             list($name, $value) = explode('=', $string);
             $this->variables[trim($name)] = trim($value);
         }
         // $callback($this->variables);
+        $this->appendToServer($variables);
     }
 
-    private function appendToServer(): void {
+    private function appendToServer(array $variables): void {
         foreach ($this->variables as $key => $value) {
             if(!array_key_exists($key, $_SERVER)) {
                 $_SERVER[$key] = $value;
