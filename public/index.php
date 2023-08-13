@@ -10,8 +10,6 @@ $dbname = "dbname = my_db";
 $credentials = "user = root password=root";
 
 
-
-
 //$db = pg_connect( "$host $port $dbname $credentials"  );
 //
 //var_dump($db);
