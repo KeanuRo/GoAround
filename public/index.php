@@ -10,7 +10,7 @@ $dbname = "dbname = my_db";
 $credentials = "user = root password=root";
 
 
-var_dump('asd');
+
 
 //$db = pg_connect( "$host $port $dbname $credentials"  );
 //
@@ -20,4 +20,6 @@ var_dump('asd');
 //} else {
 //    echo "Opened database successfully\n";
 //}
+
+var_dump('asd');
 ?>
