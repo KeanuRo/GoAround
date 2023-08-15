@@ -1,23 +1,12 @@
 <?php
 
-use GoAroundCustomer\Test;
+use Config\Config\Config;
+use Config\DotEnvLoader\KeanuDotEnvLoaderAdapter;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$host = "host = postgres";
-$port = "port = 5432";
-$dbname = "dbname = my_db";
-$credentials = "user = root password=root";
+$config = new Config(new KeanuDotEnvLoaderAdapter());
 
-
-//$db = pg_connect( "$host $port $dbname $credentials"  );
-//
-//var_dump($db);
-//if(!$db) {
-//    echo "Error : Unable to open database\n";
-//} else {
-//    echo "Opened database successfully\n";
-//}
-
-var_dump('asd');
 ?>
+
+<pre><?php print_r($_SERVER) ?></pre>
