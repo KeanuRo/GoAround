@@ -3,7 +3,9 @@
 use Config\Config\Config;
 use Config\DotEnvLoader\KeanuDotEnvLoaderAdapter;
 
-require __DIR__ . '/../vendor/autoload.php';
+define('ROOT_DIR', dirname(dirname(__DIR__) . '/..'));
+
+require ROOT_DIR . '/vendor/autoload.php';
 
 $config = new Config(new KeanuDotEnvLoaderAdapter());
 
