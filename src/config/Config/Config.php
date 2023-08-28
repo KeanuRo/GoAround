@@ -34,7 +34,6 @@ class Config
         foreach ($_SERVER as $key => $server){
             $this->config[$key] = $server;
         }
-        $this->config = $_SERVER;
     }
 
     public function get(): array
