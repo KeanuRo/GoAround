@@ -9,6 +9,8 @@ require ROOT_DIR . '/vendor/autoload.php';
 
 $config = new Config(new KeanuDotEnvLoaderAdapter());
 
-?>
+$config->set();
 
-<pre><?php print_r($_SERVER) ?></pre>
+var_dump($config->get());
+
+?>

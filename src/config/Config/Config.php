@@ -28,4 +28,20 @@ class Config
 
         $this->config = array_merge(...$configParts);
     }
+
+    public function set(): void
+    {
+        foreach ($_SERVER as $key => $server){
+            $this->config[$key] = $server;
+        }
+        $this->config = $_SERVER;
+    }
+
+    public function get(): array
+    {
+        if (count($this->config) > 0) {
+            return $this->config;
+        }
+        return [];
+    }
 }
