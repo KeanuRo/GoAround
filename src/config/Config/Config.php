@@ -2,6 +2,7 @@
 
 namespace Config\Config;
 
+use Config\Config\ConfigPath;
 use Config\DotEnvLoader\IDotEnvLoader;
 
 class Config
@@ -12,20 +13,58 @@ class Config
 
     public function __construct(IDotEnvLoader $dotEnvLoader)
     {
-        $this->loadConfig();
+        $this->loadEnvConfig();
+        $dotEnvPath = $this->getParameter(new ConfigPath(['env', 'dotEnvPath']));
+        $dotEnvLoader->load($dotEnvPath);
 
-        $loader = $dotEnvLoader;
-        $loader->load($this->config[self::DOT_ENV_PATH_PARAMETER]);
+        $this->loadConfig();
     }
 
     private function loadConfig(): void
     {
         $configParts = [];
-        foreach (glob(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '*.php') as $configFile) {
+        foreach (glob($this->getConfigPath() . '*.php') as $configFile) {
             $configPart = include $configFile;
             $configParts[] = $configPart;
         }
 
-        $this->config = array_merge(...$configParts);
+        $this->config = array_merge($this->config, ...$configParts);
     }
+
+    public function getParameter(ConfigPath $path): mixed
+    {
+        $configSection = &$this->config;
+        foreach ($path as $pathPart) {
+            $configSection = $configSection[$pathPart];
+        }
+
+        return $configSection;
+    }
+
+    public function setParameter(ConfigPath $path, mixed $value): void
+    {
+        $configSection = &$this->config;
+        foreach ($path as $pathPart) {
+            if (false === array_key_exists($pathPart, $configSection)){
+                $configSection[$pathPart] = [];
+            }
+
+            $configSection = &$configSection[$pathPart];
+        }
+
+        $configSection = $value;
+    }
+
+    private function getConfigPath(): string
+    {
+        return __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+    }
+
+    private function loadEnvConfig(): void
+    {
+        $envConfig = include $this->getConfigPath() . 'env.php';
+        $this->config = array_merge($this->config, $envConfig);
+    }
+
+
 }
