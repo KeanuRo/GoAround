@@ -35,7 +35,7 @@ class Config
     {
         $configSection = &$this->config;
         foreach ($path as $pathPart) {
-            $configSection = $configSection[$pathPart];
+            $configSection = &$configSection[$pathPart];
         }
 
         return $configSection;
@@ -65,6 +65,4 @@ class Config
         $envConfig = include $this->getConfigPath() . 'env.php';
         $this->config = array_merge($this->config, $envConfig);
     }
-
-
 }
