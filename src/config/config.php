@@ -1,6 +1,8 @@
 <?php
 
+use Config\Config\Config;
+
 return [
     'dotEnvPath' => ROOT_DIR . DIRECTORY_SEPARATOR . '.env',
-    'databasePassword' => 'DATABASE_PASSWORD',
+    'databasePassword' => Config::getEnv('DATABASE_PASSWORD'),
 ];
