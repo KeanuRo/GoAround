@@ -19,7 +19,7 @@ class articles implements Model
 
     public function all(): array
     {
-        $this->logger->write('NFNFN');
+        $this->logger->write(null);
         return [
             ['id' => 1, 'title' => 'Article from db'],
             ['id' => 2, 'title' => 'Other article from db']
