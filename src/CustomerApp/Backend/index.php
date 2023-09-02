@@ -16,41 +16,79 @@ use GoAroundCustomer\Models\articles;
 use GoAroundCustomer\utils\session;
 use GoAroundCustomer\Controllers\home;
 
-class Container implements ContainerInterface {
-    protected array $binds;
-    protected mixed $entries;
-    public function bind(string $type, string $subtype){
-        $this->binds[$type] = $subtype;
-    }
-    public function get(string $classname)
+class Container implements ContainerInterface
+{
+    private array $createdObjects = [];
+    private array $config;
+
+    public function __construct(array $config)
     {
-        $ref = new ReflectionClass($classname);
-        $contr = $ref->getConstructor();
-        $deps = [];
-        if($contr !== null){
-            $attrs = $contr->getParameters();
-            foreach ($attrs as $attr){
-                $name =  $attr->getType()->getName();
-                if(isset($this->binds[$name])){
-                    $name = $this->binds[$name];
-                }
-                $deps[] = $this->get($name);
-            }
-        }
-        $entries = new $classname(...$deps);
-        $this->entries = $entries;
-        return $entries;
+        $this->config = $config;
     }
 
-    public function has(string $classname)
+    /**
+     * @throws ReflectionException
+     * @throws Exception
+     */
+    public function get(string $className): mixed
     {
-        return 0;
+        if (array_key_exists($className, $this->createdObjects)) {
+            return $this->createdObjects[$className];
+        }
+
+        $configuredClassName = $this->config[$className] ?? $className;
+        $reflectionClass = new ReflectionClass($configuredClassName);
+        $constructor = $reflectionClass->getConstructor();
+
+        $dependencies = [];
+        if ($constructor) {
+            $dependencies = $this->getDependencies($reflectionClass, $constructor);
+        }
+
+        $instance = $reflectionClass->newInstance(...$dependencies);
+        $this->cacheInstance($className, $instance);
+
+        return $instance;
+    }
+
+    public function has(string $classname): bool
+    {
+        return class_exists($classname);
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws Exception
+     */
+    private function getDependencies(ReflectionClass $reflectionClass, ReflectionMethod $constructor): array
+    {
+        $dependencies = [];
+        foreach ($constructor->getParameters() as $parameter) {
+            if (null === $parameter->getType()) {
+                throw new Exception(
+                    'Not defined constructor parameter type. Class: "' . $reflectionClass->getName() . '" ' .
+                    'Parameter: "' . $parameter->getName() . '".'
+                );
+            }
+
+            $parameterType = $parameter->getType()->getName();
+            $dependencies[] = $this->get($parameterType);
+        }
+
+        return $dependencies;
+    }
+
+    private function cacheInstance(string $className, object $instance): void
+    {
+        $this->createdObjects[$className] = $instance;
     }
 }
 
-$container = new Container();
-$container->bind(Model::class, articles::class);
-$container->bind(Storage::class, session::class);
+$container = new Container([
+    Model::class => articles::class,
+    Storage::class => session::class,
+]);
+
 $controller = $container->get(shop::class);
 $controller->run();
 
