@@ -16,22 +16,26 @@ use GoAroundCustomer\Models\articles;
 use GoAroundCustomer\utils\session;
 use GoAroundCustomer\Controllers\home;
 
-class Container implements ContainerInterface {
+class Container implements ContainerInterface
+{
     protected array $binds;
     protected mixed $entries;
-    public function bind(string $type, string $subtype){
+
+    public function bind(string $type, string $subtype)
+    {
         $this->binds[$type] = $subtype;
     }
+
     public function get(string $classname)
     {
         $ref = new ReflectionClass($classname);
         $contr = $ref->getConstructor();
         $deps = [];
-        if($contr !== null){
+        if ($contr !== null) {
             $attrs = $contr->getParameters();
-            foreach ($attrs as $attr){
-                $name =  $attr->getType()->getName();
-                if(isset($this->binds[$name])){
+            foreach ($attrs as $attr) {
+                $name = $attr->getType()->getName();
+                if (isset($this->binds[$name])) {
                     $name = $this->binds[$name];
                 }
                 $deps[] = $this->get($name);
@@ -44,7 +48,12 @@ class Container implements ContainerInterface {
 
     public function has(string $classname)
     {
-        return 0;
+        try {
+            $ref = new ReflectionClass($classname);
+            return true;
+        } catch (Exception) {
+            return false;
+        }
     }
 }
 
@@ -53,6 +62,7 @@ $container->bind(Model::class, articles::class);
 $container->bind(Storage::class, session::class);
 $controller = $container->get(shop::class);
 $controller->run();
+var_dump($container->has('a'));
 
 //$Articles = new articles();
 //$session = new session();
