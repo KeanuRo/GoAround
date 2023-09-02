@@ -41,9 +41,7 @@ class Container implements ContainerInterface
                 $deps[] = $this->get($name);
             }
         }
-        $entries = new $classname(...$deps);
-        $this->entries = $entries;
-        return $entries;
+        return new $classname(...$deps);
     }
 
     public function has(string $classname)
@@ -61,9 +59,7 @@ $container = new Container();
 $container->bind(Model::class, articles::class);
 $container->bind(Storage::class, session::class);
 $controller = $container->get(shop::class);
-$controller->run();
-var_dump($container->has('a'));
-
+var_dump($controller);
 //$Articles = new articles();
 //$session = new session();
 //$controller = new shop($Articles, $session);
