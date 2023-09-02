@@ -19,7 +19,6 @@ use GoAroundCustomer\Controllers\home;
 class Container implements ContainerInterface
 {
     protected array $binds;
-    protected mixed $entries;
 
     public function bind(string $type, string $subtype)
     {
