@@ -1,6 +1,6 @@
 <?php
 
-require '../../../vendor/autoload.php';
+namespace Backend;
 
 use GoAroundCustomer\contracts\ContainerInterface;
 

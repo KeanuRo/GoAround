@@ -1,5 +1,7 @@
 <?php
 
+namespace GoAroundCustomer\Contracts;
+
 interface Storage
 {
     public function set(string $name, mixed $value): void;
