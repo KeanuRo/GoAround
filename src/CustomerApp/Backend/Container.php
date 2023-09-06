@@ -2,14 +2,6 @@
 
 require '../../../vendor/autoload.php';
 
-include_once('contracts/controller.php');
-include_once('contracts/model.php');
-include_once('contracts/storage.php');
-include_once('Controllers/shop.php');
-include_once('Models/articles.php');
-include_once('utils/Logger.php');
-include_once('contracts/ContainerInterface.php');
-
 use GoAroundCustomer\contracts\ContainerInterface;
 use GoAroundCustomer\Controllers\shop;
 use GoAroundCustomer\Models\articles;
@@ -83,16 +75,3 @@ class Container implements ContainerInterface
         $this->createdObjects[$className] = $instance;
     }
 }
-
-$container = new Container([
-    Model::class => articles::class,
-    Storage::class => session::class,
-]);
-
-$controller = $container->get(shop::class);
-$controller->run();
-
-//$Articles = new articles();
-//$session = new session();
-//$controller = new shop($Articles, $session);
-//$controller->run();
