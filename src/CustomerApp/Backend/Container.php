@@ -1,6 +1,6 @@
 <?php
 
-namespace Backend;
+namespace GoAroundCustomer;
 
 use GoAroundCustomer\contracts\ContainerInterface;
 
