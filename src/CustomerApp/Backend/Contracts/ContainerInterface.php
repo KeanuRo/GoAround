@@ -1,6 +1,6 @@
 <?php
 
-namespace GoAroundCustomer\contracts;
+namespace GoAroundCustomer\Contracts;
 
 interface ContainerInterface
 {
