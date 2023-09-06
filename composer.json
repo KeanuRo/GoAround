@@ -17,7 +17,8 @@
     "psr-4": {
       "GoAroundCustomer\\": "src/CustomerApp/Backend",
       "GoAroundAdmin\\": "src/AdminApp/Backend",
-      "Config\\": "src/config"
+      "Config\\": "src/config",
+      "Common\\": "src/Common"
     }
   },
   "repositories": [

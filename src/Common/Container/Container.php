@@ -1,17 +1,26 @@
 <?php
 
-namespace GoAroundCustomer;
+namespace Common\Container;
 
-use GoAroundCustomer\contracts\ContainerInterface;
+use Config\Config\Config;
+use Config\Config\ConfigPath;
+use Exception;
+use ReflectionClass;
+use ReflectionException;
+use ReflectionMethod;
 
-class Container implements ContainerInterface
+class Container implements IContainer
 {
-    private array $createdObjects = [];
-    private array $config;
+    private const CONTAINER_CONFIG_PARAMETER = ['container'];
 
-    public function __construct(array $config)
+    private Config $config;
+    private array $createdObjects = [];
+    private array $containerConfig;
+
+    public function __construct(Config $config)
     {
         $this->config = $config;
+        $this->containerConfig = $config->getParameter(new ConfigPath(self::CONTAINER_CONFIG_PARAMETER));
     }
 
     /**
@@ -24,7 +33,7 @@ class Container implements ContainerInterface
             return $this->createdObjects[$className];
         }
 
-        $configuredClassName = $this->config[$className] ?? $className;
+        $configuredClassName = $this->containerConfig[$className] ?? $className;
         $reflectionClass = new ReflectionClass($configuredClassName);
         $constructor = $reflectionClass->getConstructor();
 
@@ -53,7 +62,7 @@ class Container implements ContainerInterface
         $dependencies = [];
         foreach ($constructor->getParameters() as $parameter) {
             if (null === $parameter->getType()) {
-                throw new Exception(
+                throw new ContainerException(
                     'Not defined constructor parameter type. Class: "' . $reflectionClass->getName() . '" ' .
                     'Parameter: "' . $parameter->getName() . '".'
                 );

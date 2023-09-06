@@ -1,8 +1,8 @@
 <?php
 
-namespace GoAroundCustomer\Contracts;
+namespace Common\Container;
 
-interface ContainerInterface
+interface IContainer
 {
     public function get(string $className): mixed;
     public function has(string $classname): bool;
