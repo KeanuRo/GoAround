@@ -3,10 +3,6 @@
 require '../../../vendor/autoload.php';
 
 use GoAroundCustomer\contracts\ContainerInterface;
-use GoAroundCustomer\Controllers\shop;
-use GoAroundCustomer\Models\articles;
-use GoAroundCustomer\utils\session;
-use GoAroundCustomer\Controllers\home;
 
 class Container implements ContainerInterface
 {
