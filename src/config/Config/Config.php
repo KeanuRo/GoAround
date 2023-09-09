@@ -78,6 +78,4 @@ class Config
         $envConfig = include $this->getConfigPath() . self::ENV_CONFIG_FILE_NAME;
         $this->config = array_merge($this->config, $envConfig);
     }
-
-
 }
