@@ -4,10 +4,7 @@ namespace Common\Container;
 
 use Config\Config\Config;
 use Config\Config\ConfigPath;
-use Exception;
-use ReflectionClass;
 use ReflectionException;
-use ReflectionMethod;
 
 class Container implements IContainer
 {
@@ -25,7 +22,6 @@ class Container implements IContainer
 
     /**
      * @throws ReflectionException
-     * @throws Exception
      */
     public function get(string $className): mixed
     {
@@ -33,37 +29,22 @@ class Container implements IContainer
             return $this->createdObjects[$className];
         }
 
-        $config = $this->containerConfig[$className];
-        $configuredClassName = $className;
+        $config = $this->containerConfig[$className] ?? $className;
 
         if (is_string($config)) {
-            $configuredClassName = $config;
-        }
-
-        if (is_array($config)) {
-            if (false === array_key_exists('class', $config)) {
-                throw new ContainerException('Параметр class не задан');
-            }
-
-            $configuredClassName = $config['class'];
-        }
-
-        $reflectionClass = new ReflectionClass($configuredClassName);
-
-        if (is_array($config)) {
-            $parameters = $config['parameters'] ?? [];
-            $dependencies = $this->getConfigDependencies($parameters, $className);
+            $configObject = ObjectConfig::createFromString($config);
         } else {
-            $constructor = $reflectionClass->getConstructor();
-
-            $dependencies = [];
-            if ($constructor) {
-                $dependencies = $this->getDependencies($reflectionClass, $constructor);
-            }
+            $configObject = ObjectConfig::createFromArray($config);
         }
 
-        $instance = $reflectionClass->newInstance(...$dependencies);
-        $this->cacheInstance($className, $instance);
+        $objectPrototype = new ObjectPrototype($configObject);
+        $parameterPrototypes = $objectPrototype->getParameterPrototypes();
+        $objectParameters = $this->resolveParameterPrototypes($parameterPrototypes);
+        $instance = $objectPrototype->createInstance($objectParameters);
+
+        if ($config->needCaching()) {
+            $this->cacheInstance($className, $instance);
+        }
 
         return $instance;
     }
@@ -73,54 +54,33 @@ class Container implements IContainer
         return class_exists($classname);
     }
 
-    /**
-     * @throws ReflectionException
-     * @throws Exception
-     */
-    private function getDependencies(ReflectionClass $reflectionClass, ReflectionMethod $constructor): array
-    {
-        $dependencies = [];
-        foreach ($constructor->getParameters() as $parameter) {
-            if (null === $parameter->getType()) {
-                throw new ContainerException(
-                    'Not defined constructor parameter type. Class: "' . $reflectionClass->getName() . '" ' .
-                    'Parameter: "' . $parameter->getName() . '".'
-                );
-            }
-
-            $parameterType = $parameter->getType()->getName();
-            $dependencies[] = $this->get($parameterType);
-        }
-
-        return $dependencies;
-    }
-
     private function cacheInstance(string $className, object $instance): void
     {
         $this->createdObjects[$className] = $instance;
     }
 
-    private function getConfigDependencies(array $parameters, string $className): array
+    /**
+     * @param ObjectParameterPrototype[] $parameterPrototypes
+     * @return array
+     * @throws ReflectionException
+     */
+    private function resolveParameterPrototypes(array $parameterPrototypes): array
     {
-        $dependencies = [];
-        foreach ($parameters as $parameter) {
-            if (is_array($parameter)) {
-                if (false === array_key_exists('class', $parameter)) {
-                    throw new ContainerException('Не задан класс параметра объекта "' . $className . '". Свойство "class" не задано.');
-                }
-
-                $dependencies[] = $this->get($parameter['class']);
+        $resolvedParameters = [];
+        foreach ($parameterPrototypes as $parameterPrototype) {
+            if ($parameterPrototype->isClass()) {
+                $resolvedParameters[] = $this->get($parameterPrototype->value);
             }
 
-            if (is_callable($parameter)) {
-                $dependencies[] = $parameter($this->config, $this);
+            if ($parameterPrototype->isCallable()) {
+                $resolvedParameters[] = ($parameterPrototype->value)($this->config, $this);
             }
 
-            if (is_string($parameter)) {
-                $dependencies[] = $parameter;
+            if ($parameterPrototype->isScalar()) {
+                $resolvedParameters[] = $parameterPrototype->value;
             }
         }
 
-        return $dependencies;
+        return $resolvedParameters;
     }
 }

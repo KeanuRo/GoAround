@@ -21,4 +21,4 @@ $container = new Container($config);
 
 ?>
 
-<pre><?php var_dump($container->get(\Config\DotEnvLoader\IDotEnvLoader::class))?></pre>
+<pre><?php var_dump($container->get(Config::class))?></pre>
