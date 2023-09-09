@@ -41,13 +41,18 @@ class Container implements IContainer
         }
 
         if (is_array($config)) {
+            if (false === array_key_exists('class', $config)) {
+                throw new ContainerException('Параметр class не задан');
+            }
+
             $configuredClassName = $config['class'];
         }
 
         $reflectionClass = new ReflectionClass($configuredClassName);
 
         if (is_array($config)) {
-            $dependencies = $this->getConfigDependencies($config['parameters']);
+            $parameters = $config['parameters'] ?? [];
+            $dependencies = $this->getConfigDependencies($parameters, $className);
         } else {
             $constructor = $reflectionClass->getConstructor();
 
@@ -95,11 +100,27 @@ class Container implements IContainer
         $this->createdObjects[$className] = $instance;
     }
 
-    private function getConfigDependencies(array $parameters): array {
+    private function getConfigDependencies(array $parameters, string $className): array
+    {
         $dependencies = [];
-        foreach ($parameters as $parameter){
-            $dependencies = $parameter;
+        foreach ($parameters as $parameter) {
+            if (is_array($parameter)) {
+                if (false === array_key_exists('class', $parameter)) {
+                    throw new ContainerException('Не задан класс параметра объекта "' . $className . '". Свойство "class" не задано.');
+                }
+
+                $dependencies[] = $this->get($parameter['class']);
+            }
+
+            if (is_callable($parameter)) {
+                $dependencies[] = $parameter($this->config, $this);
+            }
+
+            if (is_string($parameter)) {
+                $dependencies[] = $parameter;
+            }
         }
+
         return $dependencies;
     }
 }
