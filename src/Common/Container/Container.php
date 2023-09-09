@@ -33,13 +33,28 @@ class Container implements IContainer
             return $this->createdObjects[$className];
         }
 
-        $configuredClassName = $this->containerConfig[$className] ?? $className;
-        $reflectionClass = new ReflectionClass($configuredClassName);
-        $constructor = $reflectionClass->getConstructor();
+        $config = $this->containerConfig[$className];
+        $configuredClassName = $className;
 
-        $dependencies = [];
-        if ($constructor) {
-            $dependencies = $this->getDependencies($reflectionClass, $constructor);
+        if (is_string($config)) {
+            $configuredClassName = $config;
+        }
+
+        if (is_array($config)) {
+            $configuredClassName = $config['class'];
+        }
+
+        $reflectionClass = new ReflectionClass($configuredClassName);
+
+        if (is_array($config)) {
+            $dependencies = $this->getConfigDependencies($config['parameters']);
+        } else {
+            $constructor = $reflectionClass->getConstructor();
+
+            $dependencies = [];
+            if ($constructor) {
+                $dependencies = $this->getDependencies($reflectionClass, $constructor);
+            }
         }
 
         $instance = $reflectionClass->newInstance(...$dependencies);
@@ -78,5 +93,13 @@ class Container implements IContainer
     private function cacheInstance(string $className, object $instance): void
     {
         $this->createdObjects[$className] = $instance;
+    }
+
+    private function getConfigDependencies(array $parameters): array {
+        $dependencies = [];
+        foreach ($parameters as $parameter){
+            $dependencies = $parameter;
+        }
+        return $dependencies;
     }
 }
